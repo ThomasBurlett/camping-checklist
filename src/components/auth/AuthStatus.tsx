@@ -23,9 +23,9 @@ export function AuthStatus({ variant = "compact" }: AuthStatusProps) {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [mode, setMode] = useState<EmailAuthMode>("sign-in");
+  const [usesExistingAccount, setUsesExistingAccount] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const emailMode = getEmailMode(mode, isAnonymous);
+  const emailMode = getEmailMode(isAnonymous, usesExistingAccount);
   const displayName = getUserDisplayName(user);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -124,7 +124,7 @@ export function AuthStatus({ variant = "compact" }: AuthStatusProps) {
     return (
       <Link className="auth-save-link" href="#/account">
         <ShieldCheck aria-hidden="true" size={15} strokeWidth={2.1} />
-        <span>{user && isAnonymous ? "Save progress" : "Account"}</span>
+        <span>{user && isAnonymous ? "Sign in to save" : "Account"}</span>
       </Link>
     );
   }
@@ -140,49 +140,11 @@ export function AuthStatus({ variant = "compact" }: AuthStatusProps) {
 
   return (
     <div className="auth-panel">
-      <div className="auth-mode-tabs" aria-label={isAnonymous ? "Connect account options" : "Account options"}>
-        {isAnonymous ? (
-          <>
-            <button
-              aria-pressed={emailMode === "connect-new"}
-              className={`auth-mode-tab${emailMode === "connect-new" ? " active" : ""}`}
-              onClick={() => setMode("connect-new")}
-              type="button"
-            >
-              Create account
-            </button>
-            <button
-              aria-pressed={emailMode === "connect-existing"}
-              className={`auth-mode-tab${emailMode === "connect-existing" ? " active" : ""}`}
-              onClick={() => setMode("connect-existing")}
-              type="button"
-            >
-              Existing account
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              aria-pressed={emailMode === "sign-in"}
-              className={`auth-mode-tab${emailMode === "sign-in" ? " active" : ""}`}
-              onClick={() => setMode("sign-in")}
-              type="button"
-            >
-              Sign in
-            </button>
-            <button
-              aria-pressed={emailMode === "create"}
-              className={`auth-mode-tab${emailMode === "create" ? " active" : ""}`}
-              onClick={() => setMode("create")}
-              type="button"
-            >
-              Create account
-            </button>
-          </>
-        )}
-      </div>
-
       <form className="auth-form" onSubmit={handleSubmit}>
+        <div className="auth-form-heading">
+          <h2>{getFormTitle(emailMode)}</h2>
+          <p>{getFormDescription(emailMode)}</p>
+        </div>
         <label className="auth-email-field">
           <span>Email address</span>
           <div className="auth-email-control">
@@ -191,7 +153,7 @@ export function AuthStatus({ variant = "compact" }: AuthStatusProps) {
               aria-label="Email address"
               className="auth-email-input"
               onChange={(event) => setEmail(event.target.value)}
-              placeholder={getEmailPlaceholder(emailMode)}
+              placeholder="you@example.com"
               type="email"
               value={email}
               variant="secondary"
@@ -207,6 +169,19 @@ export function AuthStatus({ variant = "compact" }: AuthStatusProps) {
         >
           {isSubmitting ? "Sending" : getSubmitLabel(emailMode)}
         </Button>
+        {isAnonymous ? (
+          <button
+            className="auth-switch-button"
+            onClick={() => {
+              setUsesExistingAccount((current) => !current);
+              setMessage("");
+              setError("");
+            }}
+            type="button"
+          >
+            {usesExistingAccount ? "Use a new account instead" : "Use an existing account instead"}
+          </button>
+        ) : null}
       </form>
 
       {!user ? (
@@ -231,48 +206,51 @@ export function AuthStatus({ variant = "compact" }: AuthStatusProps) {
   );
 }
 
-function getEmailMode(mode: EmailAuthMode, isAnonymous: boolean): EmailAuthMode {
-  if (isAnonymous) {
-    return mode === "connect-existing" ? "connect-existing" : "connect-new";
-  }
-
-  return mode === "create" ? "create" : "sign-in";
+function getEmailMode(isAnonymous: boolean, usesExistingAccount: boolean): EmailAuthMode {
+  if (!isAnonymous) return "email-link";
+  return usesExistingAccount ? "connect-existing" : "connect-new";
 }
 
-function getEmailPlaceholder(mode: EmailAuthMode) {
+function getFormTitle(mode: EmailAuthMode) {
   switch (mode) {
-    case "create":
     case "connect-new":
-      return "Email for new account";
+      return "Save guest progress";
     case "connect-existing":
-      return "Existing account email";
+      return "Merge into an existing account";
     default:
-      return "Email for sign in";
+      return "Continue with email";
+  }
+}
+
+function getFormDescription(mode: EmailAuthMode) {
+  switch (mode) {
+    case "connect-new":
+      return "We will email a confirmation link and keep this guest session connected to that account.";
+    case "connect-existing":
+      return "We will email a sign-in link, then merge this guest packing progress after you open it.";
+    default:
+      return "One email link signs you in or creates your account if this is your first time.";
   }
 }
 
 function getSubmitLabel(mode: EmailAuthMode) {
   switch (mode) {
-    case "create":
-      return "Create";
     case "connect-new":
-      return "Save";
+      return "Email save link";
     case "connect-existing":
-      return "Sign in";
+      return "Email sign-in link";
     default:
-      return "Sign in";
+      return "Email me a link";
   }
 }
 
 function getSuccessMessage(mode: EmailAuthMode) {
   switch (mode) {
     case "connect-new":
-      return "Check your email to finish saving this account.";
+      return "Check your email to finish saving this guest progress.";
     case "connect-existing":
-      return "Check your email to sign in and sync guest progress.";
-    case "create":
-      return "Check your email to finish creating your account.";
+      return "Check your email to sign in. This guest progress will merge after the link opens.";
     default:
-      return "Check your email for the sign-in link.";
+      return "Check your email for the Packtical sign-in link.";
   }
 }

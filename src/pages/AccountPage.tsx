@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
-import { Button, Card, Chip, Input, Link } from "@heroui/react";
-import { ArrowLeft } from "lucide-react";
+import { Button, Card, Chip, Input } from "@heroui/react";
 import { AuthStatus } from "@/components/auth/AuthStatus";
+import { ChecklistBackLink } from "@/components/navigation/ChecklistBackLink";
 import { useAuth } from "@/auth/auth-context";
 import { getSupabaseErrorMessage } from "@/lib/supabase-errors";
 import { getUserFirstName, getUserLastName } from "@/auth/user-display";
@@ -13,10 +13,7 @@ export function AccountPage() {
   return (
     <main className="page-frame account-page">
       <section className="page-shell account-shell">
-        <Link className="page-back-link" href="#/">
-          <ArrowLeft aria-hidden="true" size={16} strokeWidth={2.2} />
-          Back to checklists
-        </Link>
+        <ChecklistBackLink />
 
         <Card className="account-card" variant="secondary">
           <Card.Content className="account-card-content">
@@ -29,7 +26,7 @@ export function AccountPage() {
               </h1>
               <p className="account-description">
                 {user && isAnonymous
-                  ? "Create a new account or sign in to an existing one. Your guest checklist progress will stay synced."
+                  ? "Add an email to save this guest session, or use an existing account and merge this packing progress after the email link opens."
                   : "Your checklist progress and custom items are synced with Supabase."}
               </p>
             </div>

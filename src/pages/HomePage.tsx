@@ -356,12 +356,14 @@ function HomeAccountLink({
     ? "Checking sync"
     : displayName && !isAnonymous
       ? displayName
+      : isAnonymous
+        ? "Sign in to save"
       : userEmail
-        ? "Save progress"
+        ? "Account"
         : "Account"
 
   return (
-    <Link className="home-account-link" href="#/account" title={userEmail || "Account and sync settings"}>
+    <Link className="home-account-link" href="#/account" title={isAnonymous ? "Sign in to save progress" : userEmail || "Account and sync settings"}>
       <UserRound aria-hidden="true" size={16} strokeWidth={2.1} />
       <span>{label}</span>
     </Link>

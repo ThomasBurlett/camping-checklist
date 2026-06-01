@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import type { SupabaseUser } from "@/lib/supabase";
 
-export type EmailAuthMode = "sign-in" | "create" | "connect-existing" | "connect-new";
+export type EmailAuthMode = "email-link" | "connect-existing" | "connect-new";
 
 export type AuthContextValue = {
   authError: string;

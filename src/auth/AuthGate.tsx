@@ -53,9 +53,9 @@ export function AuthGate({ children }: { children: ReactNode }) {
               <Chip className="hero-chip" variant="soft">
                 Packtical
               </Chip>
-              <h1 className="auth-gate-title">Start packing your way.</h1>
+              <h1 className="auth-gate-title">Start with an email link.</h1>
               <p className="auth-gate-copy">
-                Sign in, create an account, or continue as a guest. Guest progress is synced and can be connected to an account later.
+                One link signs you in or creates your account. You can also continue as a guest and connect that packing progress later.
               </p>
               <AuthStatus variant="full" />
             </Card.Content>

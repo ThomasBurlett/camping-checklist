@@ -192,31 +192,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             });
             throw error;
           }
-
-          const { error: signOutError } = await supabase.auth.signOut();
-          if (signOutError) {
-            showToast({
-              title: "We couldn't switch accounts",
-              description: getSupabaseErrorMessage(signOutError),
-            });
-            throw signOutError;
-          }
         }
 
         const { error } = await supabase.auth.signInWithOtp({
           email,
           options: {
             emailRedirectTo: window.location.origin + window.location.pathname,
-            shouldCreateUser: mode === "create",
+            shouldCreateUser: mode !== "connect-existing",
           },
         });
 
         if (error) {
           showToast({
-            title:
-              mode === "create"
-                ? "We couldn't create that account"
-                : "We couldn't send the sign-in link",
+            title: "We couldn't send the email link",
             description: getSupabaseErrorMessage(error),
           });
           throw error;

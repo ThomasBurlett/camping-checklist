@@ -1,9 +1,11 @@
 import { useEffect, useRef } from "react"
 import { Card, Link } from "@heroui/react"
-import { ArrowLeft, Cloud, FolderOpen, Layers3, UserRound } from "lucide-react"
+import { Cloud, FolderOpen, Layers3, UserRound } from "lucide-react"
 import { ActivityNav } from "@/components/checklist/ActivityNav"
 import { ChecklistSection } from "@/components/checklist/ChecklistSection"
 import { ChecklistToolbar } from "@/components/checklist/ChecklistToolbar"
+import { ChecklistBackLink } from "@/components/navigation/ChecklistBackLink"
+import { useAuth } from "@/auth/auth-context"
 import { CHECKLISTS, CHECKLIST_MAP } from "@/data/checklists"
 import { ActivityIcon } from "@/lib/activity-icons"
 import {
@@ -27,10 +29,7 @@ export function ChecklistPage({ slug }: ChecklistPageProps) {
           <Card className="page-hero checklist-hero" variant="tertiary">
             <Card.Content className="unknown-card-body">
               <p className="unknown-card-copy">Unknown checklist.</p>
-              <Link className="page-back-link" href="#/">
-                <ArrowLeft aria-hidden="true" size={16} strokeWidth={2.2} />
-                Back to checklist hub
-              </Link>
+              <ChecklistBackLink />
             </Card.Content>
           </Card>
         </section>
@@ -220,15 +219,19 @@ function ChecklistPageContent({ checklist }: { checklist: (typeof CHECKLISTS)[nu
 }
 
 function ChecklistTopbar() {
+  const { isAnonymous } = useAuth()
+  const accountLabel = isAnonymous ? "Sign in to save" : "Account"
+
   return (
     <nav className="checklist-hero-topbar" aria-label="Checklist navigation">
-      <Link className="page-back-link checklist-hub-link" href="#/">
-        <ArrowLeft aria-hidden="true" size={16} strokeWidth={2.2} />
-        <span>Checklist hub</span>
-      </Link>
-      <Link className="checklist-account-link" href="#/account" aria-label="Account and sync settings">
+      <ChecklistBackLink className="checklist-hub-link" />
+      <Link
+        className="checklist-account-link"
+        href="#/account"
+        aria-label={isAnonymous ? "Sign in to save progress" : "Account and sync settings"}
+      >
         <UserRound aria-hidden="true" size={16} strokeWidth={2.1} />
-        <span>Account</span>
+        <span>{accountLabel}</span>
       </Link>
     </nav>
   )
