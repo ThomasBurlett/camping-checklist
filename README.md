@@ -41,6 +41,16 @@ VITE_USE_LOCAL_AUTH=true
 
 Local auth only works in Vite development mode. It signs the app in as `local-dev@packtical.test` and stores checklist progress in browser `localStorage` instead of Supabase.
 
+## Testing
+
+The validation suite has three layers:
+
+- `pnpm run test` runs Vitest unit and component tests in jsdom.
+- `pnpm run test:coverage` runs the same tests with V8 coverage reporting.
+- `pnpm run test:e2e` runs the Playwright browser smoke test against the Vite app with local dev auth enabled.
+
+Use `pnpm run test:all` when you want the fast suite and browser smoke test together. GitHub Actions runs lint, tests, e2e smoke, and build on pushes to `main` and pull requests.
+
 ## Supabase sync
 
 Supabase is required for checklist persistence. Visitors can sign in, create an account, or continue with an anonymous Supabase user and attach that progress to an email account later:
